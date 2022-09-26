@@ -3,6 +3,15 @@ interface User {
   socketId: string;
 }
 
+export const friends: { [key: string]: string[] } = {
+  abc: ["acb", "bac"],
+  acb: ["abc", "bac", "bca"],
+  bac: ["abc", "acb"],
+  bca: ["acb", "cab", "cba"],
+  cab: ["bca", "cba"],
+  cba: ["bca", "cab"],
+};
+
 const users: User[] = [];
 
 export function getUsers() {

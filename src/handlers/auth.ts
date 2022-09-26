@@ -1,21 +1,22 @@
 import { Server, Socket } from "socket.io";
-import jwt from "jsonwebtoken";
-import { addUser, getUsers, removeUser } from "../utils/user";
 import { EVENTS } from "../types";
-
-interface UserPayload {
-  id: string;
-  email: string;
-}
+import { addUser, getUsers, removeUser, friends } from "../utils/user";
 
 export const registerAuthHandler = (io: Server, socket: Socket) => {
-  console.log("socket:", socket.id, "connected with token:", socket.handshake.auth.token);
+  const userId = socket.handshake.headers.user as string;
+  console.log("user :", userId, " / socket ID :", socket.id, " / has connected");
 
   const userJoin = () => {
     try {
-      //   const { id } = jwt.verify(socket.handshake.auth.token, process.env.JWT_KEY!) as UserPayload;
-      const id = "user-id";
-      addUser({ userId: id, socketId: socket.id });
+      socket.join(userId);
+      socket.join(friends[userId]);
+
+      addUser({ userId: userId, socketId: socket.id });
+
+      const notification = { id: userId, status: true };
+
+      socket.to(userId).emit("statusNotification", notification);
+
       console.log(getUsers());
     } catch (err) {
       console.error(err);
@@ -23,8 +24,16 @@ export const registerAuthHandler = (io: Server, socket: Socket) => {
   };
 
   const userLeave = () => {
-    console.log("user :", socket.id, " has been disconnected");
+    console.log("user :", userId, " / socket ID :", socket.id, " / has been disconnected");
+
     removeUser(socket.id);
+
+    socket.leave(userId);
+
+    const notification = { id: userId, status: false };
+
+    socket.to(userId).emit("statusNotification", notification);
+
     console.log(getUsers());
   };
 
