@@ -1,3 +1,4 @@
+// Message schema for event payloads validation
 export const messageSchema = {
   id: "/message",
   type: "object",

@@ -8,6 +8,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
 
+// serving static files for testing sockets by some basic web pages
 app.use("/", express.static(path.join(__dirname, "src/public")));
 
 init(io);

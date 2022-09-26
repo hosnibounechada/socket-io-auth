@@ -15,8 +15,9 @@ export const authenticationMiddleware = (socket: Socket, next: (err?: ExtendedEr
     // const { id } = jwt.verify(socket.handshake.auth.token, process.env.JWT_KEY!) as UserPayload;
     // socket.handshake.headers.user = id;
 
-    // for test reasons
+    // for test purposes
     if (!authTokens.includes(token)) return next(new Error("not authorized"));
+    // assign the user id in the headers.user for much more security reasons.
     socket.handshake.headers.user = socket.handshake.auth.token;
   } catch {
     return next(new Error("not authorized"));

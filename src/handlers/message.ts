@@ -7,9 +7,10 @@ export const registerMessagesHandler = (io: Server, socket: Socket) => {
   socket.on(EVENTS.MESSAGE_TO_SERVER, (message: Message) => {
     //for more security reasons we can extract the user id from socket.handshake.auth.token
     if (!DataValidator.isValid(messageSchema, message)) return;
-
     console.log("from client", socket.handshake.headers.user, ":", message);
+    // save message in persistent database before triggering the event
+    //
+    // send private message to particular user
     io.to(message.to).emit(EVENTS.MESSAGE_TO_CLIENT, message);
-    // io.emit(EVENTS.MESSAGE_TO_CLIENT, message);
   });
 };
